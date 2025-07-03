@@ -1,2 +1,14 @@
-# Skillpilot-Web-Application
-SkillPilot helps students and professionals find the best careers, jobs, and skills using AI. It analyzes your resume and profile to suggest personalized job options and courses.  With an easy dashboard and smart search, SkillPilot makes career planning simple.  Built with React, Flask, and PostgreSQL, it’s designed to grow and support your goals.
+# 🚀 SkillPilot
+
+*SkillPilot* is an AI-powered platform designed to help students and professionals discover personalized career paths, job recommendations, and skill development plans based on their profiles and market trends.
+
+---
+
+## 🧩 Tech Stack
+
+| Layer        | Technology                                                  |
+| ------------ | ----------------------------------------------------------- |
+| *Frontend* | React.js + Tailwind CSS                                     |
+| *Backend*  | Flask (Python) — ML, API, authentication, recommendations   |
+| *Database* | PostgreSQL — relational, scalable                           |
+| *ORM*      | SQLAlchemy      
