@@ -80,3 +80,4 @@ def login():
 def logout():
     logout_user()
     return jsonify({"message": "User logged out successfully"}), 200
+
