@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.python-version
+
+# Flask cache and logs
+instance/
+*.log
+
+# SQLite database
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.env.*
+
+# VSCode and other editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Mac OS system files
+.DS_Store
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Compiled files
+*.so
+
+# Node.js (if using frontend build tools)
+node_modules/
+dist/
+build/
