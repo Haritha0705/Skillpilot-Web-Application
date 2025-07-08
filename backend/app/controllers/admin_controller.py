@@ -8,7 +8,7 @@ class AdminController:
     def get_all_students(self):
         try:
             students = StudentProfile.query.all()
-            return jsonify([{"id": c.id, "name": c.name} for c in students])
+            return jsonify([{"id": s.id, "name": s.name} for s in students])
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
@@ -16,7 +16,7 @@ class AdminController:
     def get_all_professionals(self):
         try:
             professionals = ProfessionalProfile.query.all()
-            return jsonify([{"id": t.id, "name": t.name} for t in professionals])
+            return jsonify([{"id": p.id, "name": p.name} for p in professionals])
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
@@ -24,7 +24,7 @@ class AdminController:
     def get_all_company(self):
         try:
             companys = CompanyProfile.query.all()
-            return jsonify([{"id": t.id, "name": t.name} for t in companys])
+            return jsonify([{"id": c.id, "name": c.name} for c in companys])
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
@@ -35,13 +35,13 @@ class AdminController:
             user = User.query.get(user_id)
 
             if not student or not user:
-                return jsonify({"error": "Customer not found"}), 404
+                return jsonify({"error": "Student not found"}), 404
 
             db.session.delete(student)
             db.session.delete(user)
             db.session.commit()
 
-            return jsonify({"message": "Customer deleted by admin"})
+            return jsonify({"message": "Student deleted by admin"})
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
@@ -53,13 +53,13 @@ class AdminController:
             user = User.query.get(user_id)
 
             if not professional or not user:
-                return jsonify({"error": "Technician not found"}), 404
+                return jsonify({"error": "Professional not found"}), 404
 
             db.session.delete(professional)
             db.session.delete(user)
             db.session.commit()
 
-            return jsonify({"message": "Technician deleted by admin"})
+            return jsonify({"message": "Professional deleted by admin"})
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
@@ -71,13 +71,13 @@ class AdminController:
             user = User.query.get(user_id)
 
             if not company or not user:
-                return jsonify({"error": "Technician not found"}), 404
+                return jsonify({"error": "Company not found"}), 404
 
             db.session.delete(company)
             db.session.delete(user)
             db.session.commit()
 
-            return jsonify({"message": "Technician deleted by admin"})
+            return jsonify({"message": "Company deleted by admin"})
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500

@@ -14,4 +14,4 @@ def update_profile_route():
 
 @student_bp.route('/student/delete', methods=['DELETE'])
 def delete_profile_route():
-    return controller.delete_customer()
+    return controller.delete_student()

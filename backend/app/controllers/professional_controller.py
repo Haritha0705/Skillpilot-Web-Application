@@ -9,7 +9,7 @@ class ProfessionalController:
         try:
             profile = ProfessionalProfile.query.filter_by(user_id=current_user.id).first()
             if not profile:
-                return jsonify({"error": "Customer profile not found"}), 404
+                return jsonify({"error": "Professional profile not found"}), 404
 
             return jsonify({
                 "profile": {
@@ -28,7 +28,7 @@ class ProfessionalController:
             data = request.get_json()
             profile = ProfessionalProfile.query.filter_by(user_id=current_user.id).first()
             if not profile:
-                return jsonify({"error": "Customer profile not found"}), 404
+                return jsonify({"error": "Professional profile not found"}), 404
 
             profile.name = data.get("name", profile.name)
             profile.address = data.get("address", profile.address)
@@ -41,18 +41,18 @@ class ProfessionalController:
             return jsonify({"error": "Failed to update profile", "details": str(e)}), 500
 
     @login_required
-    def delete_customer(self):
+    def delete_professional(self):
         try:
             profile = ProfessionalProfile.query.filter_by(user_id=current_user.id).first()
             if not profile:
-                return jsonify({"error": "Customer profile not found"}), 404
+                return jsonify({"error": "Professional profile not found"}), 404
 
             db.session.delete(profile)
             db.session.commit()
 
-            return jsonify({"message": "Customer deleted successfully"}), 200
+            return jsonify({"message": "Professional deleted successfully"}), 200
 
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": "Failed to delete customer", "details": str(e)}), 500
+            return jsonify({"error": "Failed to delete professional", "details": str(e)}), 500
 
