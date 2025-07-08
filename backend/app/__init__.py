@@ -1,37 +1,44 @@
 from flask import Flask
-from config import Config
-from app.models import db,bcrypt
 from flask_login import LoginManager
-from app.models import Student,Professional,Company
-from app.routes import auth_routes,profile_routes
-#,professional_routes,student_routes,company_routes,admin_routes)
+from app.models import db, User
+from app.routes import all_blueprints
+from app.config import Config
+from dotenv import load_dotenv
 
-login_manager = LoginManager()
+load_dotenv()
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
+class AppFactory:
+    def __init__(self):
+        self.app = Flask(__name__)
+        self._configure_app()
+        self._init_db()
+        self._init_login_manager()
+        self._register_blueprints()
+        self._create_tables()
 
-    db.init_app(app)
-    bcrypt.init_app(app)
-    login_manager.init_app(app)
+    def _configure_app(self):
+        self.app.config.from_object(Config)
 
-    auth_routes(app)
-    profile_routes(app)
-    # admin_routes(app)
-    # student_routes(app)
-    # company_routes(app)
-    # professional_routes(app)
+    def _init_db(self):
+        db.init_app(self.app)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        return (
-                Student.query.get(int(user_id)) or
-                Professional.query.get(int(user_id)) or
-                Company.query.get(int(user_id))
-        )
+    def _init_login_manager(self):
+        login_manager = LoginManager()
+        login_manager.login_view = 'auth.login'
+        login_manager.init_app(self.app)
 
-    with app.app_context():
-        db.create_all()
+        @login_manager.user_loader
+        def load_user(user_id):
+            return User.query.get(int(user_id))
 
-    return app
+    def _register_blueprints(self):
+        for bp in all_blueprints:
+            self.app.register_blueprint(bp)
+
+    def _create_tables(self):
+        with self.app.app_context():
+            db.create_all()
+
+    def get_app(self):
+        return self.app
+

@@ -1,6 +1,6 @@
-from app import create_app
+from app import AppFactory
 
-app = create_app()
+app = AppFactory().get_app()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

@@ -1,71 +1,46 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 
 db = SQLAlchemy()
-bcrypt = Bcrypt()
 
-class Student(db.Model, UserMixin):
-    __tablename__ = 'students'
+class User(db.Model,UserMixin):
+    __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default="student")
+    role = db.Column(db.String(20), nullable=False)
 
-    # Additional fields
-    full_name = db.Column(db.String(200), nullable=True)
-    phone = db.Column(db.String(20), nullable=True)
-    age = db.Column(db.Integer, nullable=True)
-    gender = db.Column(db.String(20), nullable=True)
-    location = db.Column(db.String(150), nullable=True)
-    education_level = db.Column(db.String(100), nullable=True)
-    graduation_year = db.Column(db.String(10), nullable=True)
-    university = db.Column(db.String(200), nullable=True)
-    skills = db.Column(db.Text, nullable=True)
-    interests = db.Column(db.Text, nullable=True)
-    resume_url = db.Column(db.String(300), nullable=True)
-    profile_picture = db.Column(db.String(300), nullable=True)
-    linkedin_profile = db.Column(db.String(300), nullable=True)
-    github_profile = db.Column(db.String(300), nullable=True)
-    portfolio_url = db.Column(db.String(300), nullable=True)
+    # Relationships
+    company_profile = db.relationship('CompanyProfile', backref='user', uselist=False)
+    professional_profile = db.relationship('ProfessionalProfile', backref='user', uselist=False)
+    student_profile = db.relationship('StudentProfile', backref='user', uselist=False)
 
-class Professional(db.Model, UserMixin):
-    __tablename__ = 'professionals'
+    def is_admin(self):
+        return self.role == 'admin'
+
+class CompanyProfile(db.Model):
+    __tablename__ = 'company_profiles'
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default="professional")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    name = db.Column(db.String(100))
+    address = db.Column(db.String(255))
 
-    # Additional fields
-    full_name = db.Column(db.String(200), nullable=True)
-    company_name = db.Column(db.String(200), nullable=True)
-    job_title = db.Column(db.String(150), nullable=True)
-    phone = db.Column(db.String(20), nullable=True)
-    location = db.Column(db.String(150), nullable=True)
-    industry = db.Column(db.String(100), nullable=True)
-    years_of_experience = db.Column(db.String(50), nullable=True)
-    linkedin_profile = db.Column(db.String(300), nullable=True)
-    website = db.Column(db.String(300), nullable=True)
-    bio = db.Column(db.Text, nullable=True)
-    profile_picture = db.Column(db.String(300), nullable=True)
+# Profile for technicians
+class ProfessionalProfile(db.Model):
+    __tablename__ = 'professional_profiles'
 
-class Company(db.Model, UserMixin):
-    __tablename__ = 'companies'
     id = db.Column(db.Integer, primary_key=True)
-    comname = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default="company")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    skill = db.Column(db.String(100))
+    experience = db.Column(db.String(100))
 
-    # Additional fields
-    contact_person = db.Column(db.String(120), nullable=True)
-    phone = db.Column(db.String(20), nullable=True)
-    website = db.Column(db.String(300), nullable=True)
-    industry = db.Column(db.String(100), nullable=True)
-    location = db.Column(db.String(150), nullable=True)
-    company_size = db.Column(db.String(50), nullable=True)
-    description = db.Column(db.Text, nullable=True)
-    logo_url = db.Column(db.String(300), nullable=True)
-    linkedin_url = db.Column(db.String(300), nullable=True)
+class StudentProfile(db.Model):
+    __tablename__ = 'student_profiles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    skill = db.Column(db.String(100))
+    experience = db.Column(db.String(100))

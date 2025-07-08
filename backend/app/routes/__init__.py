@@ -1,24 +1,7 @@
-from .auth import auth_bp
-from .student import student_bp
-from .admin import admin_bp
-from .professional import professional_bp
-from .company import company_bp
-from .profile import profile_bp
+from .auth_routes import auth_bp
+from .admin_routes import admin_bp
+from .student_routes import student_bp
+from .professional_routes import professional_bp
+from .company_routes import company_bp
 
-def auth_routes(app):
-    app.register_blueprint(auth_bp)
-
-def profile_routes(app):
-    app.register_blueprint(profile_bp)
-
-def student_routes(app):
-    app.register_blueprint(student_bp)
-
-def admin_routes(app):
-    app.register_blueprint(admin_bp)
-
-def company_routes(app):
-    app.register_blueprint(company_bp)
-
-def professional_routes(app):
-    app.register_blueprint(professional_bp)
+all_blueprints = [auth_bp,admin_bp,student_bp,professional_bp,company_bp]
