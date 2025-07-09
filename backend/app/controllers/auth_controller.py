@@ -79,7 +79,7 @@ class AuthController:
             db.session.commit()
             login_user(new_user)
 
-            return jsonify({"message":"Register successfully"},new_user), 201
+            return jsonify({"message":"Register successfully"},new_user.to_dict()), 201
 
         except sqlalchemy.exc.SQLAlchemyError as e:
             db.session.rollback()

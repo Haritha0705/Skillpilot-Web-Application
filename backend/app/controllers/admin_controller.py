@@ -2,8 +2,16 @@ from flask import jsonify,request
 from app.utils.decorators import admin_required
 from app.models import db, CompanyProfile,StudentProfile,ProfessionalProfile
 from app.config import Config
+from flask_login import login_user, UserMixin
 
-class AdminController:
+class AdminController(UserMixin):
+    def __init__(self):
+        self.id = "admin"
+        self.role = "admin"
+        self.username = Config.ADMIN_USERNAME
+
+    def get_id(self):
+        return self.id
 
     def login(self):
         try:
@@ -15,6 +23,8 @@ class AdminController:
             password = data.get('password')
 
             if username == Config.ADMIN_USERNAME and password == Config.ADMIN_PASSWORD:
+                admin_user = AdminController()
+                login_user(admin_user)
                 return jsonify({"message": "Logged in successfully"}), 200
 
             return jsonify({"error": "Invalid credentials"}), 401
@@ -30,7 +40,7 @@ class AdminController:
     def get_all_students(self):
         try:
             students = StudentProfile.query.all()
-            return jsonify([{"id": s.id, "name": s.name} for s in students])
+            return jsonify([s.to_dict() for s in students]), 200
         except Exception as e:
             return jsonify({
                 "error": "Login failed",
@@ -42,7 +52,7 @@ class AdminController:
     def get_all_professionals(self):
         try:
             professionals = ProfessionalProfile.query.all()
-            return jsonify([{"id": p.id, "name": p.name} for p in professionals])
+            return jsonify([p.to_dict() for p in professionals]), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
@@ -51,7 +61,7 @@ class AdminController:
     def get_all_company(self):
         try:
             companys = CompanyProfile.query.all()
-            return jsonify([{"id": c.id, "name": c.name} for c in companys])
+            return jsonify([c.to_dict() for c in companys]), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
@@ -59,7 +69,7 @@ class AdminController:
     @admin_required
     def admin_delete_students(self, user_id):
         try:
-            student = StudentProfile.query.filter_by(user_id=user_id).first()
+            student = StudentProfile.query.get(user_id)
 
             if not student:
                 return jsonify({"error": "Student not found"}), 404
@@ -76,7 +86,7 @@ class AdminController:
     @admin_required
     def admin_delete_professional(self, user_id):
         try:
-            professional = ProfessionalProfile.query.filter_by(user_id=user_id).first()
+            professional = ProfessionalProfile.query.get(user_id)
 
             if not professional:
                 return jsonify({"error": "Professional not found"}), 404
@@ -93,7 +103,7 @@ class AdminController:
     @admin_required
     def admin_delete_company(self, user_id):
         try:
-            company = CompanyProfile.query.filter_by(user_id=user_id).first()
+            company = CompanyProfile.query.get(user_id)
 
             if not company:
                 return jsonify({"error": "Company not found"}), 404

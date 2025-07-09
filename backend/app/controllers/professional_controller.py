@@ -4,10 +4,9 @@ from app.models import db, ProfessionalProfile
 
 class ProfessionalController:
 
-    @login_required
     def get_profile(self):
         try:
-            profile = ProfessionalProfile.query.filter_by(user_id=current_user.id).first()
+            profile = ProfessionalProfile.query.get(current_user.id)
             if not profile:
                 return jsonify({"error": "Professional profile not found"}), 404
 
@@ -22,11 +21,10 @@ class ProfessionalController:
             return jsonify({"error": "Failed to fetch profile", "details": str(e)}), 500
 
 
-    @login_required
     def update_profile(self):
         try:
             data = request.get_json()
-            profile = ProfessionalProfile.query.filter_by(user_id=current_user.id).first()
+            profile = ProfessionalProfile.query.get(current_user.id)
             if not profile:
                 return jsonify({"error": "Professional profile not found"}), 404
 
@@ -41,10 +39,9 @@ class ProfessionalController:
             return jsonify({"error": "Failed to update profile", "details": str(e)}), 500
 
 
-    @login_required
     def delete_professional(self):
         try:
-            profile = ProfessionalProfile.query.filter_by(user_id=current_user.id).first()
+            profile = ProfessionalProfile.query.get(current_user.id)
             if not profile:
                 return jsonify({"error": "Professional profile not found"}), 404
 

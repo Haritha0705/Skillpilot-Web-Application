@@ -1,13 +1,13 @@
 from flask import request, jsonify
-from flask_login import current_user,login_required
-from app.models import db, StudentProfile
+from flask_login import current_user
+from app.models import db, CompanyProfile
 
 class CompanyController:
 
-    @login_required
+
     def get_profile(self):
         try:
-            profile = StudentProfile.query.filter_by(user_id=current_user.id).first()
+            profile = CompanyProfile.query.get(current_user.id)
             if not profile:
                 return jsonify({"error": "Company profile not found"}), 404
 
@@ -22,11 +22,10 @@ class CompanyController:
             return jsonify({"error": "Failed to fetch profile", "details": str(e)}), 500
 
 
-    @login_required
     def update_profile(self):
         try:
             data = request.get_json()
-            profile = StudentProfile.query.filter_by(user_id=current_user.id).first()
+            profile = CompanyProfile.query.get(current_user.id)
             if not profile:
                 return jsonify({"error": "Company profile not found"}), 404
 
@@ -40,10 +39,10 @@ class CompanyController:
             db.session.rollback()
             return jsonify({"error": "Failed to update profile", "details": str(e)}), 500
 
-    @login_required
+
     def delete_company(self):
         try:
-            profile = StudentProfile.query.filter_by(user_id=current_user.id).first()
+            profile = CompanyProfile.query.get(current_user.id)
             if not profile:
                 return jsonify({"error": "Company profile not found"}), 404
 

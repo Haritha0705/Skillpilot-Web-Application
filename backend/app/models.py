@@ -19,6 +19,16 @@ class StudentProfile(UserMixin, db.Model):
     def get_id(self):
         return str(self.id)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "role": self.role,
+            "name": self.name,
+            "address": self.address
+        }
+
 
 class ProfessionalProfile(UserMixin, db.Model):
     __tablename__ = 'professional_profiles'
@@ -35,6 +45,16 @@ class ProfessionalProfile(UserMixin, db.Model):
     def get_id(self):
         return str(self.id)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "role": self.role,
+            "skill": self.skill,
+            "experience": self.experience
+        }
+
 
 class CompanyProfile(UserMixin, db.Model):
     __tablename__ = 'company_profiles'
@@ -50,3 +70,13 @@ class CompanyProfile(UserMixin, db.Model):
 
     def get_id(self):
         return str(self.id)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "role": self.role,
+            "skill": self.skill,
+            "experience": self.experience
+        }

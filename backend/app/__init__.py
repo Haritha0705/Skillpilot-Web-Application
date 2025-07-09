@@ -1,9 +1,10 @@
 from flask import Flask
 from flask_login import LoginManager
-from app.models import db, User
+from app.models import db, StudentProfile, ProfessionalProfile, CompanyProfile
 from app.routes import all_blueprints
 from app.config import Config
 from dotenv import load_dotenv
+from app.controllers.admin_controller import AdminController
 
 load_dotenv()
 
@@ -29,7 +30,19 @@ class AppFactory:
 
         @login_manager.user_loader
         def load_user(user_id):
-            return User.query.get(int(user_id))
+            if user_id == "admin":
+                return AdminController()
+
+            try:
+                user_id = int(user_id)
+                for model in (StudentProfile, ProfessionalProfile, CompanyProfile):
+                    user = model.query.get(user_id)
+                    if user:
+                        return user
+            except ValueError:
+                pass
+
+            return None
 
     def _register_blueprints(self):
         for bp in all_blueprints:
@@ -41,4 +54,3 @@ class AppFactory:
 
     def get_app(self):
         return self.app
-
