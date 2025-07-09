@@ -13,9 +13,9 @@ class User(db.Model,UserMixin):
     role = db.Column(db.String(20), nullable=False)
 
     # Relationships
-    company_profile = db.relationship('CompanyProfile', backref='user', uselist=False)
-    professional_profile = db.relationship('ProfessionalProfile', backref='user', uselist=False)
-    student_profile = db.relationship('StudentProfile', backref='user', uselist=False)
+    company_profile = db.relationship('CompanyProfile', backref='users', uselist=False)
+    professional_profile = db.relationship('ProfessionalProfile', backref='users', uselist=False)
+    student_profile = db.relationship('StudentProfile', backref='users', uselist=False)
 
     def is_admin(self):
         return self.role == 'admin'

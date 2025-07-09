@@ -6,6 +6,7 @@ from flask_login import login_user,logout_user,login_required
 from werkzeug.security import check_password_hash,generate_password_hash
 
 class AuthController:
+
     def register(self):
         try:
             data = request.get_json()

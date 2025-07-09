@@ -40,6 +40,7 @@ class ProfessionalController:
             db.session.rollback()
             return jsonify({"error": "Failed to update profile", "details": str(e)}), 500
 
+
     @login_required
     def delete_professional(self):
         try:

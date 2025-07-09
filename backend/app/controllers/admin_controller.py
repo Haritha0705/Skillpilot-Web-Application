@@ -1,8 +1,30 @@
-from flask import jsonify
+from flask import jsonify,request
 from app.utils.decorators import admin_required
 from app.models import db, CompanyProfile,StudentProfile,ProfessionalProfile , User
+from app.config import Config
 
 class AdminController:
+
+    def login(self):
+        try:
+            data = request.get_json()
+            if not data or not data.get('username') or not data.get('password'):
+                return jsonify({"error": "Username and password are required"}), 400
+
+            username = data.get('username')
+            password = data.get('password')
+
+            if username == Config.ADMIN_USERNAME and password == Config.ADMIN_PASSWORD:
+                return jsonify({"message": "Logged in successfully"}), 200
+
+            return jsonify({"error": "Invalid credentials"}), 401
+
+        except Exception as e:
+            return jsonify({
+                "error": "Login failed",
+                "details": str(e)
+            }), 500
+
 
     @admin_required
     def get_all_students(self):
@@ -10,7 +32,11 @@ class AdminController:
             students = StudentProfile.query.all()
             return jsonify([{"id": s.id, "name": s.name} for s in students])
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return jsonify({
+                "error": "Login failed",
+                "details": str(e)
+            }), 500
+
 
     @admin_required
     def get_all_professionals(self):
@@ -20,6 +46,7 @@ class AdminController:
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
+
     @admin_required
     def get_all_company(self):
         try:
@@ -27,6 +54,7 @@ class AdminController:
             return jsonify([{"id": c.id, "name": c.name} for c in companys])
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
 
     @admin_required
     def admin_delete_students(self, user_id):
@@ -46,6 +74,7 @@ class AdminController:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
 
+
     @admin_required
     def admin_delete_professional(self, user_id):
         try:
@@ -63,6 +92,7 @@ class AdminController:
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
+
 
     @admin_required
     def admin_delete_company(self, user_id):
