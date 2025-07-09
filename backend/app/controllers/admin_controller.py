@@ -1,6 +1,6 @@
 from flask import jsonify,request
 from app.utils.decorators import admin_required
-from app.models import db, CompanyProfile,StudentProfile,ProfessionalProfile , User
+from app.models import db, CompanyProfile,StudentProfile,ProfessionalProfile
 from app.config import Config
 
 class AdminController:
@@ -60,13 +60,11 @@ class AdminController:
     def admin_delete_students(self, user_id):
         try:
             student = StudentProfile.query.filter_by(user_id=user_id).first()
-            user = User.query.get(user_id)
 
-            if not student or not user:
+            if not student:
                 return jsonify({"error": "Student not found"}), 404
 
             db.session.delete(student)
-            db.session.delete(user)
             db.session.commit()
 
             return jsonify({"message": "Student deleted by admin"})
@@ -79,13 +77,11 @@ class AdminController:
     def admin_delete_professional(self, user_id):
         try:
             professional = ProfessionalProfile.query.filter_by(user_id=user_id).first()
-            user = User.query.get(user_id)
 
-            if not professional or not user:
+            if not professional:
                 return jsonify({"error": "Professional not found"}), 404
 
             db.session.delete(professional)
-            db.session.delete(user)
             db.session.commit()
 
             return jsonify({"message": "Professional deleted by admin"})
@@ -98,13 +94,11 @@ class AdminController:
     def admin_delete_company(self, user_id):
         try:
             company = CompanyProfile.query.filter_by(user_id=user_id).first()
-            user = User.query.get(user_id)
 
-            if not company or not user:
+            if not company:
                 return jsonify({"error": "Company not found"}), 404
 
             db.session.delete(company)
-            db.session.delete(user)
             db.session.commit()
 
             return jsonify({"message": "Company deleted by admin"})
