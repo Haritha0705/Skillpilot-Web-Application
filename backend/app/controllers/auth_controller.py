@@ -1,5 +1,5 @@
 from flask import request,jsonify,session
-from app.models import User,StudentProfile,ProfessionalProfile,CompanyProfile
+from app.models import StudentProfile,ProfessionalProfile,CompanyProfile
 from app import db
 import sqlalchemy.exc
 from flask_login import login_user,logout_user,login_required
@@ -17,45 +17,65 @@ class AuthController:
             if data['role'] not in ['student', 'professional','company']:
                 return jsonify({"error": "Invalid role"}), 400
 
-            existing_user = User.query.filter(
-                (User.username == data['username']) | (User.email == data['email'])
-            ).first()
-            if existing_user:
-                return jsonify({"error": "Username or Email already exists"}), 409
-
             hashed_password = generate_password_hash(data['password'])
-            new_user = User(
-                username=data['username'],
-                email=data['email'],
-                password=hashed_password,
-                role=data['role']
-            )
-            db.session.add(new_user)
-            db.session.commit()
+
+            new_user = None
 
             if data['role'] == 'student':
-                profile = StudentProfile(
-                    user_id=new_user.id,
+                existing_student = StudentProfile.query.filter(
+                    (StudentProfile.username == data['username']) |
+                    (StudentProfile.email == data['email'])
+                ).first()
+                if existing_student:
+                    return jsonify({"error": "Username or Email already exists"}), 409
+
+                new_user = StudentProfile(
+                    username=data['username'],
+                    email=data['email'],
+                    password=hashed_password,
+                    role='student',
+
                     name=data.get('name'),
                     address=data.get('address')
                 )
-                db.session.add(profile)
+
             elif data['role'] == 'professional':
-                profile = ProfessionalProfile(
-                    user_id=new_user.id,
+                existing_professional = ProfessionalProfile.query.filter(
+                    (ProfessionalProfile.username == data['username']) |
+                    (ProfessionalProfile.email == data['email'])
+                ).first()
+                if existing_professional:
+                    return jsonify({"error": "Username or Email already exists"}), 409
+
+                new_user = ProfessionalProfile(
+                    username=data['username'],
+                    email=data['email'],
+                    password=hashed_password,
+                    role='professional',
+
                     skill=data.get('skill'),
                     experience=data.get('experience')
                 )
-                db.session.add(profile)
 
             elif data['role'] == 'company':
-                profile = CompanyProfile(
-                    user_id=new_user.id,
+                existing_company = CompanyProfile.query.filter(
+                    (CompanyProfile.username == data['username']) |
+                    (CompanyProfile.email == data['email'])
+                ).first()
+                if existing_company:
+                    return jsonify({"error": "Username or Email already exists"}), 409
+
+                new_user = CompanyProfile(
+                    username=data['username'],
+                    email=data['email'],
+                    password=hashed_password,
+                    role='company',
+
                     skill=data.get('skill'),
                     experience=data.get('experience')
                 )
-                db.session.add(profile)
 
+            db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
 
@@ -74,13 +94,24 @@ class AuthController:
             if not data.get('username') or not data.get('password'):
                 return jsonify({"error": "Username and password required"}), 400
 
-            user = User.query.filter_by(username=data['username']).first()
-            if user and check_password_hash(user.password, data['password']):
+            username = data['username']
+            password = data['password']
+
+            user = (
+                    StudentProfile.query.filter_by(username=username).first() or
+                    ProfessionalProfile.query.filter_by(username=username).first() or
+                    CompanyProfile.query.filter_by(username=username).first()
+            )
+
+            if user and check_password_hash(user.password, password):
                 login_user(user)
                 session['role'] = user.role
-                return jsonify({"message": "Logged in successfully", "role": user.role}), 200
+                return jsonify({
+                    "message": "Logged in successfully",
+                    "role": user.role
+                }), 200
 
-            return jsonify({"message": "Invalid credentials"}), 401
+            return jsonify({"error": "Invalid credentials"}), 401
 
         except Exception as e:
             return jsonify({"error": "Login failed", "details": str(e)}), 500
